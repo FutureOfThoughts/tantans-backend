@@ -2,7 +2,7 @@
 const express = require('express');
 const addressesRouter = express.Router();
 const addressesController = require('../controllers/addressesController');
-const authMiddleware = require('../middleware/auth');
+const authMiddleware = require('../middleware/authMiddleware');
 
 addressesRouter.get('/', authMiddleware, addressesController.getAddresses);
 addressesRouter.post('/', authMiddleware, addressesController.addAddress);

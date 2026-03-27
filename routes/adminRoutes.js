@@ -2,7 +2,7 @@
 const express = require('express');
 const adminRouter = express.Router();
 const adminController = require('../controllers/adminController');
-const authMiddleware = require('../middleware/auth');
+const authMiddleware = require('../middleware/authMiddleware');
 
 adminRouter.get('/bookings', authMiddleware, adminController.getAllBookings);
 adminRouter.patch('/bookings/:bookingId/status', authMiddleware, adminController.updateBookingStatus);

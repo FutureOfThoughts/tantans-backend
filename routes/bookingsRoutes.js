@@ -2,7 +2,7 @@
 const express = require('express');
 const bookingsRouter = express.Router();
 const bookingsController = require('../controllers/bookingsController');
-const authMiddleware = require('../middleware/auth');
+const authMiddleware = require('../middleware/authMiddleware');
 
 bookingsRouter.post('/', authMiddleware, bookingsController.createBooking);
 bookingsRouter.get('/', authMiddleware, bookingsController.getUserBookings);
