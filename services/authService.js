@@ -1,10 +1,10 @@
+// src/services/authService.js
 const { supabase } = require('../config/supabase');
 
 const signup = async ({ email, password, first_name, last_name, phone }) => {
   let authUser = null;
 
   try {
-    // Step 1 — create auth user
     const { data: authData, error: authError } = await supabase.auth.admin.createUser({
       email,
       password,
@@ -15,7 +15,6 @@ const signup = async ({ email, password, first_name, last_name, phone }) => {
 
     authUser = authData.user;
 
-    // Step 2 — create profile
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .insert({
@@ -29,10 +28,17 @@ const signup = async ({ email, password, first_name, last_name, phone }) => {
 
     if (profileError) throw new Error(profileError.message);
 
-    return { user: authUser, profile };
+    // Sign in to get a session after creating the user
+    const { data: sessionData, error: sessionError } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (sessionError) throw new Error(sessionError.message);
+
+    return { user: authUser, profile, session: sessionData.session };
 
   } catch (error) {
-    // Rollback — delete auth user if profile creation failed
     if (authUser) {
       await supabase.auth.admin.deleteUser(authUser.id);
     }
