@@ -1,8 +1,10 @@
+// src/middleware/authMiddleware.js
 const { supabase } = require('../config/supabase');
 
 const authMiddleware = async (req, res, next) => {
   try {
-    const token = req.headers.authorization?.replace('Bearer ', '');
+    // Read token from httpOnly cookie (set at login/signup)
+    const token = req.cookies?.access_token;
 
     if (!token) {
       return res.status(401).json({ success: false, error: 'Please log in to continue' });
@@ -24,12 +26,7 @@ const authMiddleware = async (req, res, next) => {
       return res.status(404).json({ success: false, error: 'Profile not found' });
     }
 
-    req.user = {
-      id: user.id,
-      email: user.email,
-      ...profile
-    };
-
+    req.user = { id: user.id, email: user.email, ...profile };
     next();
   } catch (error) {
     console.error('Auth middleware error:', error);
